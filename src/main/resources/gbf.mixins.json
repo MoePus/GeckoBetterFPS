@@ -1,0 +1,19 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.moepus.gbf.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "gbf.refmap.json",
+  "mixins": [
+    "BakedModelFactoryBuiltinMixin",
+    "GeoRendererMixin"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  }
+}
