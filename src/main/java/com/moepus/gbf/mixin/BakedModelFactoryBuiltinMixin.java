@@ -32,20 +32,14 @@ public abstract class BakedModelFactoryBuiltinMixin implements BakedModelFactory
         Vec3 vertexSize = size.multiply(1 / 16d, 1 / 16d, 1 / 16d);
 
         pivot = pivot.multiply(-1, 1, 1);
-
-        PoseStack poseStack = new PoseStack();
-        poseStack.rotateAround(new Quaternionf().rotateZYX(
-                        (float) Math.toRadians(rotation.z()), -(float) Math.toRadians(rotation.y()), -(float) Math.toRadians(rotation.x())),
-                (float) pivot.x() / 16f, (float) pivot.y() / 16f, (float) pivot.z() / 16f);
-
         GeoQuad[] quads = buildQuads(cube.uv(), new BakedModelFactory.VertexSet(origin, vertexSize, inflate), cube, (float) properties.textureWidth(), (float) properties.textureHeight(), mirror);
-        for (var quad : quads) {
-            if (quad == null) continue;
-            quad.normal().mul(poseStack.last().normal());
-            for (var vertex : quad.vertices()) {
-                vertex.position().mulPosition(poseStack.last().pose());
-            }
+
+        if (rotation.distanceToSqr(Vec3.ZERO) > 1e-5) {
+            rotation = new Vec3(Math.toRadians(-rotation.x), Math.toRadians(-rotation.y), Math.toRadians(rotation.z));
+        } else {
+            rotation = Vec3.ZERO;
         }
-        return new GeoCube(quads, pivot, Vec3.ZERO, size, inflate, mirror);
+
+        return new GeoCube(quads, pivot, rotation, size, inflate, mirror);
     }
 }

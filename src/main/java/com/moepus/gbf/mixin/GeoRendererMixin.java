@@ -11,6 +11,7 @@ import net.caffeinemc.mods.sodium.api.vertex.buffer.VertexBufferWriter;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -39,11 +40,14 @@ public interface GeoRendererMixin {
     @Overwrite(remap = false)
     default void renderCube(PoseStack poseStack, GeoCube cube, VertexConsumer buffer, int packedLight,
                             int packedOverlay, float red, float green, float blue, float alpha) {
-        if (!cube.rotation().equals(Vec3.ZERO)) {
-            RenderUtils.translateToPivotPoint(poseStack, cube);
-            RenderUtils.rotateMatrixAroundCube(poseStack, cube);
-            RenderUtils.translateAwayFromPivotPoint(poseStack, cube);
+        Vec3 rotation = cube.rotation();
+        if (!rotation.equals(Vec3.ZERO)) {
+            Vec3 pivot = cube.pivot();
+            poseStack.rotateAround(
+                    (new Quaternionf()).rotationZYX((float) rotation.z(), (float) rotation.y(), (float) rotation.x()),
+                    (float) (pivot.x() / 16.0F), (float) (pivot.y() / 16.0F), (float) (pivot.z() / 16.0F));
         }
+
         VertexBufferWriter writer = VertexBufferWriter.tryOf(buffer);
         if (writer != null) {
             if (buffer instanceof BufferBuilder bb) {
@@ -60,6 +64,7 @@ public interface GeoRendererMixin {
                 }
             }
         }
+
         Matrix3f normalisedPoseState = poseStack.last().normal();
         Matrix4f poseState = poseStack.last().pose();
         Vector3f normal = new Vector3f();

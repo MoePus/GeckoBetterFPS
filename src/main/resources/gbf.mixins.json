@@ -5,10 +5,11 @@
   "compatibilityLevel": "JAVA_8",
   "refmap": "gbf.refmap.json",
   "mixins": [
-    "BakedModelFactoryBuiltinMixin",
-    "GeoRendererMixin"
   ],
   "client": [
+    "BakedModelFactoryBuiltinMixin",
+    "GeoRendererMixin",
+    "RenderUtilsMixin"
   ],
   "injectors": {
     "defaultRequire": 1

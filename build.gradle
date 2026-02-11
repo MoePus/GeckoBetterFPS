@@ -165,6 +165,7 @@ dependencies {
     runtimeOnly fg.deobf("curse.maven:irons-spells-n-spellbooks-855414:7552907")
     runtimeOnly fg.deobf("curse.maven:curios-309927:6418456")
     runtimeOnly fg.deobf("curse.maven:playeranimator-658587:4587214")
+    implementation fg.deobf("curse.maven:zombie-extreme-392809:7014500")
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.
