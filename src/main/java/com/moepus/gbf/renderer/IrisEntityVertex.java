@@ -1,5 +1,6 @@
 package com.moepus.gbf.renderer;
 
+import com.moepus.gbf.IrisCompat;
 import net.caffeinemc.mods.sodium.api.vertex.format.VertexFormatDescription;
 import net.caffeinemc.mods.sodium.api.vertex.format.VertexFormatRegistry;
 import net.irisshaders.iris.uniforms.CapturedRenderingState;
@@ -31,6 +32,6 @@ public class IrisEntityVertex {
 	}
 
 	static {
-		FORMAT = VertexFormatRegistry.instance().get(IrisVertexFormats.ENTITY);
+		FORMAT = IrisCompat.IS_IRIS_INSTALLED ? VertexFormatRegistry.instance().get(IrisVertexFormats.ENTITY) : null;
 	}
 }

@@ -1,6 +1,7 @@
 package com.moepus.gbf.mixin;
 
 import com.moepus.gbf.renderer.IrisCubeRenderer;
+import com.moepus.gbf.renderer.IrisEntityVertex;
 import com.moepus.gbf.renderer.SodiumCubeRenderer;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
@@ -53,10 +54,11 @@ public interface GeoRendererMixin {
             if (buffer instanceof BufferBuilder bb) {
                 if (bb.format == DefaultVertexFormat.NEW_ENTITY) {
                     SodiumCubeRenderer.renderCube(poseStack, cube, writer, packedLight, packedOverlay, red, green, blue, alpha);
-                } else {
+                    return;
+                } else if (bb.format == IrisEntityVertex.FORMAT) {
                     IrisCubeRenderer.renderCube(poseStack, cube, writer, packedLight, packedOverlay, red, green, blue, alpha);
+                    return;
                 }
-                return;
             } else if (buffer instanceof SodiumBufferBuilder sbb) {
                 if (sbb.getOriginalBufferBuilder().format == DefaultVertexFormat.NEW_ENTITY) {
                     SodiumCubeRenderer.renderCube(poseStack, cube, writer, packedLight, packedOverlay, red, green, blue, alpha);
