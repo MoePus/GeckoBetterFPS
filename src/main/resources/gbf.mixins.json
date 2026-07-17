@@ -2,13 +2,20 @@
   "required": true,
   "minVersion": "0.8",
   "package": "com.moepus.gbf.mixin",
+  "plugin": "com.moepus.gbf.MixinPlugin",
   "compatibilityLevel": "JAVA_8",
   "refmap": "gbf.refmap.json",
   "mixins": [
+    "AnimatableManagerAccessor",
+    "AnimationControllerMixin",
+    "AnimationProcessorMixin",
+    "BoneAnimationQueueMixin",
     "MolangParserMixin"
   ],
   "client": [
     "BakedModelFactoryBuiltinMixin",
+    "GeoArmorRendererMixin",
+    "GeoRendererBonePlanMixin",
     "GeoRendererMixin",
     "RenderUtilsMixin"
   ],

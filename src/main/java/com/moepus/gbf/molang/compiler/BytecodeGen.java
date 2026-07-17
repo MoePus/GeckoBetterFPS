@@ -1,6 +1,7 @@
 package com.moepus.gbf.molang.compiler;
 
 import com.eliotlash.mclib.math.IValue;
+import com.moepus.gbf.ConfigParser;
 import com.moepus.gbf.molang.compiler.node.CachedAstNode;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
@@ -28,9 +29,12 @@ public final class BytecodeGen {
             BytecodeGen.class.getPackageName().replace('.', '/') + "/MolangCompiled_";
     private static final ConcurrentMap<AstShape, CompiledFactory> COMPILED_CLASSES = new ConcurrentHashMap<>();
     private static final AtomicLong ORDINAL = new AtomicLong();
+    private static final boolean DUMP_CLASSES = ConfigParser.getConfig().dumpMolangCompiledClasses;
 
     static {
-        clearCacheDir();
+        if (DUMP_CLASSES) {
+            clearCacheDir();
+        }
     }
 
     private BytecodeGen() {
@@ -74,7 +78,9 @@ public final class BytecodeGen {
         writer.visitEnd();
 
         byte[] bytes = writer.toByteArray();
-        dumpClass(className, bytes);
+        if (DUMP_CLASSES) {
+            dumpClass(className, bytes);
+        }
 
         Class<?> generatedClass = MethodHandles.lookup().defineHiddenClass(bytes, true).lookupClass();
         Constructor<?> constructor = generatedClass.getConstructor(Object[].class);
