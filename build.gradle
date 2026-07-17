@@ -148,6 +148,26 @@ repositories {
     }
 }
 
+def geckolibArtifact = "curse.maven:geckolib-388172:7553267"
+def embeddedMclibJar = layout.buildDirectory.file("generated/embedded-libs/mclib-20.jar")
+
+configurations {
+    geckolibEmbedded {
+        canBeConsumed = false
+        canBeResolved = true
+        transitive = false
+    }
+}
+
+def extractMclibForCompile = tasks.register('extractMclibForCompile', Copy) {
+    from({ configurations.geckolibEmbedded.collect { zipTree(it) } }) {
+        include 'META-INF/jarjar/mclib-20.jar'
+        eachFile { details -> details.path = details.name }
+        includeEmptyDirs = false
+    }
+    into layout.buildDirectory.dir('generated/embedded-libs')
+}
+
 dependencies {
     // Specify the version of Minecraft to use.
     // Any artifact can be supplied so long as it has a "userdev" classifier artifact and is a compatible patcher artifact.
@@ -160,7 +180,11 @@ dependencies {
 
     implementation(fg.deobf("org.embeddedt:embeddium-${minecraft_version}:${embeddium_version}+mc${minecraft_version}"))
     implementation(fg.deobf("maven.modrinth:oculus:${minecraft_version}-${oculus_version}"))
-    implementation fg.deobf("curse.maven:geckolib-388172:7553267")
+    implementation fg.deobf(geckolibArtifact)
+    geckolibEmbedded geckolibArtifact
+    compileOnly files(embeddedMclibJar)
+    testImplementation files(embeddedMclibJar)
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.1'
 
     runtimeOnly fg.deobf("curse.maven:irons-spells-n-spellbooks-855414:7552907")
     runtimeOnly fg.deobf("curse.maven:curios-309927:6418456")
@@ -203,5 +227,15 @@ tasks.named('jar', Jar).configure {
 }
 
 tasks.withType(JavaCompile).configureEach {
+    dependsOn extractMclibForCompile
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+}
+
+tasks.named('test', Test).configure {
+    useJUnitPlatform()
+    def testRunDirectory = layout.buildDirectory.dir('test-run')
+    workingDir testRunDirectory
+    doFirst {
+        testRunDirectory.get().asFile.mkdirs()
+    }
 }

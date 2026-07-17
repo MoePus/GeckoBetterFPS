@@ -5,6 +5,7 @@
   "compatibilityLevel": "JAVA_8",
   "refmap": "gbf.refmap.json",
   "mixins": [
+    "MolangParserMixin"
   ],
   "client": [
     "BakedModelFactoryBuiltinMixin",
